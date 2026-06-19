@@ -48,7 +48,7 @@ x-airflow-common:
     &airflow-common-env
     AIRFLOW__CORE__EXECUTOR: LocalExecutor
     AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
-    AIRFLOW__CORE__FERNET_KEY: ''
+    AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW__CORE__FERNET_KEY:-}
     AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
     AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
     AIRFLOW__API__AUTH_BACKENDS: 'airflow.api.auth.backend.basic_auth,airflow.api.auth.backend.session'
@@ -84,35 +84,35 @@ services:
       - "9000:9000"
       - "9001:9001"
 
-  metabase:
-    profiles:
-      - bi
-    image: metabase/metabase:v0.59.12
-    container_name: metabase
-    hostname: metabase
-    ports:
-      - "3000:3000"
-    volumes:
-      - /dev/urandom:/dev/random:ro
-      - ./metabase/plugins:/plugins
-    environment:
-      MB_DB_TYPE: postgres
-      MB_DB_DBNAME: metabase
-      MB_DB_PORT: 5432
-      MB_DB_USER: metabase
-      MB_DB_PASS: metabase
-      MB_DB_HOST: postgres
-      MB_PLUGINS_DIR: /plugins
-      JAVA_TIMEZONE: UTC
-    depends_on:
-      postgres:
-        condition: service_healthy
-    healthcheck:
-      test: curl --fail -I http://localhost:3000/api/health || exit 1
-      interval: 15s
-      timeout: 5s
-      retries: 5
-      start_period: 60s
+  # metabase:
+  #   profiles:
+  #     - bi
+  #   image: metabase/metabase:v0.59.12
+  #   container_name: metabase
+  #   hostname: metabase
+  #   ports:
+  #     - "3000:3000"
+  #   volumes:
+  #     - /dev/urandom:/dev/random:ro
+  #     - ./metabase/plugins:/plugins
+  #   environment:
+  #     MB_DB_TYPE: postgres
+  #     MB_DB_DBNAME: metabase
+  #     MB_DB_PORT: 5432
+  #     MB_DB_USER: metabase
+  #     MB_DB_PASS: metabase
+  #     MB_DB_HOST: postgres
+  #     MB_PLUGINS_DIR: /plugins
+  #     JAVA_TIMEZONE: UTC
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #   healthcheck:
+  #     test: curl --fail -I http://localhost:3000/api/health || exit 1
+  #     interval: 15s
+  #     timeout: 5s
+  #     retries: 5
+  #     start_period: 60s
 
   # Shared Postgres: DWH (postgres/postgres), Airflow (airflow/airflow), Metabase (metabase/metabase).
   # Init script creates airflow and metabase DBs on first start (empty volume only).

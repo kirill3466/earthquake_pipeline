@@ -4,7 +4,10 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = []
+dependencies = [
+    "apache-airflow==2.10.5",
+    "duckdb>=1.5.4",
+]
 
 [dependency-groups]
 dev = [
